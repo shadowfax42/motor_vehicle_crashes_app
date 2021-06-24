@@ -17,27 +17,26 @@ def load_data(numrows):
     data.dropna(subset=['LATITUDE', 'LONGITUDE'], inplace=True)
     lowercase = lambda x: str(x).lower()
     data.rename(lowercase, axis='columns', inplace=True)
-    data['crash_date_time'] = data['crash_date'].astype(str) + ' ' + data['crash_time'].astype(str)
+    data['crash_date_time'] = data['crash_date'].astype(str) +' ' +  data['crash_time'].astype(str)
     data.rename(columns={'crash_date_time': 'date/time'}, inplace=True)
-    data['date/time'] = pd.to_datetime(data['date/time'])
-    # data.drop(columns=['crash_date', 'crash_time'], inplace=True)
+    data['date/time'] = pd.to_datetime(data['date/time'].astype(str))
+    data.drop(columns=['crash_date', 'crash_time'], inplace=True)
 
     # pop date/time column from the dataframe
-    # first_col = data.pop('date/time')
+    first_col = data.pop('date/time')
     # insert the column at the first position
-    # data.insert(1, 'date/time', first_col)
+    data.insert(0, 'date/time', first_col)
     return data
 
 
 # load 100000 rows from the data
-data = load_data(100000)
+data = load_data(1000)
 original_data = data
 st.header("Where are the most people injured in NYC?")
 injured_people = st.slider("Number of persons injured in vehicle collisions", 0, 19) # 19 injuries is the max in the dataset
 st.map(data.query("injured_persons >= @injured_people")[['latitude', 'longitude']].dropna(how="any"))
 
 st.header("How many collisions occur during a given time of day?")
-# hour = st.selectbox("Hour to look at", range(0, 24), 1)
 hour = st.slider("Hour to look at", 0,23)
 data = data[data['date/time'].dt.hour == hour]
 
@@ -58,7 +57,7 @@ st.write(pdk.Deck(
         data=data[['date/time', 'latitude', 'longitude']],
         get_position = ['longitude', 'latitude'],
         radius = 100,
-        extruded = True,
+        # extruded = True,
         pickable = True,
         elevation_scale = 4,
         elevation_range = [0, 1000],
@@ -85,6 +84,7 @@ elif select == 'Cyclists':
     st.write(original_data.query("injured_cyclists >= 1")[["on_street_name", "injured_cyclists"]].sort_values(by=['injured_cyclists'], ascending=False).dropna(how="any")[:5])
 else:
     st.write(original_data.query("injured_motorists >= 1")[["on_street_name", "injured_motorists"]].sort_values(by=['injured_motorists'], ascending=False).dropna(how="any")[:5])
+
 
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
