@@ -20,12 +20,12 @@ def load_data(numrows):
     data['crash_date_time'] = data['crash_date'].astype(str) +' ' +  data['crash_time'].astype(str)
     data.rename(columns={'crash_date_time': 'date/time'}, inplace=True)
     data['date/time'] = pd.to_datetime(data['date/time'].astype(str))
-    data.drop(columns=['crash_date', 'crash_time'], inplace=True)
+    # data.drop(columns=['crash_date', 'crash_time'], inplace=True)
 
     # pop date/time column from the dataframe
-    first_col = data.pop('date/time')
+    # first_col = data.pop('date/time')
     # insert the column at the first position
-    data.insert(0, 'date/time', first_col)
+    # data.insert(0, 'date/time', first_col)
     return data
 
 
@@ -84,6 +84,8 @@ elif select == 'Cyclists':
     st.write(original_data.query("injured_cyclists >= 1")[["on_street_name", "injured_cyclists"]].sort_values(by=['injured_cyclists'], ascending=False).dropna(how="any")[:5])
 else:
     st.write(original_data.query("injured_motorists >= 1")[["on_street_name", "injured_motorists"]].sort_values(by=['injured_motorists'], ascending=False).dropna(how="any")[:5])
+
+
 
 
 if st.checkbox("Show Raw Data", False):
