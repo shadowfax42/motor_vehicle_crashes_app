@@ -4,12 +4,12 @@ import numpy as np
 import pydeck as pdk
 import plotly.express as px
 
-DATA_URL = ("./data/Motor_Vehicle_Collisions_Crashes.csv")
+DATA_URL = ("data/Motor_Vehicle_Collisions_Crashes.csv")
 
 
 st.title("Motor Vehicle Collisions in New York City")
 st.markdown("This application is a streamlit dashboard that can be used "
-            "to analyze motor vehicle Collisions in NYC 🗽💥🚗")
+            "to analyze motor vehicle collisions in NYC 🗽💥🚗")
 
 @st.cache(persist=True)
 def load_data(numrows):
@@ -30,7 +30,7 @@ def load_data(numrows):
 
 
 # load 100000 rows from the data
-data = load_data(1000)
+data = load_data(100000)
 original_data = data
 st.header("Where are the most people injured in NYC?")
 injured_people = st.slider("Number of persons injured in vehicle collisions", 0, 19) # 19 injuries is the max in the dataset
@@ -57,7 +57,7 @@ st.write(pdk.Deck(
         data=data[['date/time', 'latitude', 'longitude']],
         get_position = ['longitude', 'latitude'],
         radius = 100,
-        # extruded = True,
+        extruded = True,
         pickable = True,
         elevation_scale = 4,
         elevation_range = [0, 1000],
