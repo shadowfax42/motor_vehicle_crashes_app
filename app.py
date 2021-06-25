@@ -4,14 +4,14 @@ import numpy as np
 import pydeck as pdk
 import plotly.express as px
 
-# DATA_URL = ("data/Motor_Vehicle_Collisions_Crashes.csv")
+# DATA source: https://data.cityofnewyork.us/Public-Safety/Motor-Vehicle-Collisions-Crashes/h9gi-nx95
 
 DATA_URL = ("data/Motor_Vehicle_Collisions.csv")
 
 
 st.title("Motor Vehicle Collisions in New York City")
-st.markdown("This application is a streamlit dashboard that can be used "
-            "to analyze motor vehicle collisions in NYC 🗽💥🚗")
+st.markdown("This is a Streamlit dashboard used to visualize/analyze"
+            "Motor Vehicle Collisions 💥🚗 in New York City 🗽")
 
 @st.cache(persist=True)
 def load_data(numrows):
