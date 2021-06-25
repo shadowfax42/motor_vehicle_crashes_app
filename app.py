@@ -4,7 +4,9 @@ import numpy as np
 import pydeck as pdk
 import plotly.express as px
 
-DATA_URL = ("data/Motor_Vehicle_Collisions_Crashes.csv")
+# DATA_URL = ("data/Motor_Vehicle_Collisions_Crashes.csv")
+
+DATA_URL = ("data/Motor_Vehicle_Collisions.csv")
 
 
 st.title("Motor Vehicle Collisions in New York City")
@@ -13,13 +15,15 @@ st.markdown("This application is a streamlit dashboard that can be used "
 
 @st.cache(persist=True)
 def load_data(numrows):
-    data = pd.read_csv(DATA_URL, nrows=numrows, parse_dates=['CRASH_DATE', 'CRASH_TIME'])
+    data = pd.read_csv(DATA_URL, nrows=numrows, parse_dates=['CRASH DATE', 'CRASH TIME'])
     data.dropna(subset=['LATITUDE', 'LONGITUDE'], inplace=True)
     lowercase = lambda x: str(x).lower()
     data.rename(lowercase, axis='columns', inplace=True)
-    data['crash_date_time'] = data['crash_date'].astype(str) +' ' +  data['crash_time'].astype(str)
-    data.rename(columns={'crash_date_time': 'date/time'}, inplace=True)
-    data['date/time'] = pd.to_datetime(data['date/time'].astype(str))
+    data.columns = data.columns.str.replace(' ', '_')
+    data['crash_date_time'] = data['crash_date'].astype(str) + ' ' + data['crash_time'].astype(str)
+    data.rename(columns={'crash_date_time': 'date/time', 'number_of_persons_injured': 'injured_persons', 'number_of_pedestrians_injured':'injured_pedestrians',
+                     'number_of_motorist_injured':'injured_motorists'}, inplace=True)
+    data['date/time'] = pd.to_datetime(data['date/time'])
     # data.drop(columns=['crash_date', 'crash_time'], inplace=True)
 
     # pop date/time column from the dataframe
@@ -48,7 +52,7 @@ st.write(pdk.Deck(
     initial_view_state = {
         "latitude": midpoint[0],
         "longitude": midpoint[1],
-        "zoom": 11,
+        "zoom": 15,
         "pitch": 50,
     },
     layers=[
@@ -71,7 +75,7 @@ filtered = data[
     (data['date/time'].dt.hour >= hour) & (data["date/time"].dt.hour < (hour + 1))
     ]
 hist = np.histogram(filtered["date/time"].dt.minute, bins=60, range=(0, 60))[0]
-chart_data = pd.DataFrame({"minute": range(60), "crashes":hist})
+chart_data = pd.DataFrame({"minute": range(60), "crashes": hist})
 fig = px.bar(chart_data, x="minute", y="crashes", hover_data=['minute', "crashes"], height=400)
 st.write(fig)
 
@@ -90,4 +94,4 @@ else:
 
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
-    st.write(data)
+    st.write(original_data)
