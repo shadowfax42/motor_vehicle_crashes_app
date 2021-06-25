@@ -15,7 +15,7 @@ st.markdown("This application is a streamlit dashboard that can be used "
 
 @st.cache(persist=True)
 def load_data(numrows):
-    data = pd.read_csv(DATA_URL, nrows=numrows, parse_dates=['CRASH DATE', 'CRASH TIME'])
+    data = pd.read_csv(DATA_URL, nrows=numrows)
     data.dropna(subset=['LATITUDE', 'LONGITUDE'], inplace=True)
     lowercase = lambda x: str(x).lower()
     data.rename(lowercase, axis='columns', inplace=True)
@@ -35,6 +35,7 @@ def load_data(numrows):
 
 # load 100000 rows from the data
 data = load_data(100000)
+
 original_data = data
 st.header("Where are the most people injured in NYC?")
 injured_people = st.slider("Number of persons injured in vehicle collisions", 0, 19) # 19 injuries is the max in the dataset
@@ -90,8 +91,9 @@ else:
     st.write(original_data.query("injured_motorists >= 1")[["on_street_name", "injured_motorists"]].sort_values(by=['injured_motorists'], ascending=False).dropna(how="any")[:5])
 
 
-
-
 if st.checkbox("Show Raw Data", False):
     st.subheader('Raw Data')
-    st.write(original_data)
+    st.write(data)
+
+
+
